@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pendaftaran Futsal - TBP Championship HUT RI 81</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --red: #E24B4A; --red-light: #FCEBEB; --red-dark: #791F1F;
+    --gold: #EF9F27; --gold-light: #FAEEDA; --gold-dark: #7A4700;
+    --green: #2E7D32; --green-light: #E8F5E9; --green-dark: #1B5E20;
+    --blue: #1565C0; --blue-light: #E3F2FD;
+    --gray: #888780; --gray-light: #F5F5F5; --gray-dark: #2C2C2A;
+    --white: #fff;
+    --radius-sm: 8px; --radius: 12px; --radius-lg: 16px;
+  }
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: linear-gradient(160deg, #0a1628 0%, #1a2d4a 60%, #0f1e35 100%);
+    min-height: 100vh; color: #222;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(180deg, #0a0a0a 0%, #1a0000 50%, #0a0a0a 100%);
+    padding: 24px 20px 20px;
+    text-align: center;
+    border-bottom: 3px solid var(--gold);
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content:'';position:absolute;inset:0;
+    background:radial-gradient(ellipse at 50% 0%,rgba(239,159,39,0.15) 0%,transparent 70%);
+  }
+  .hero-logo { position:relative; z-index:1; margin-bottom:4px; }
+  .hero-logo img { max-width:260px; width:80%; height:auto; display:block; margin:0 auto; }
+  .hero-sub {
+    position:relative; z-index:1;
+    font-size:11px; font-weight:700; letter-spacing:3px;
+    color:rgba(255,255,255,0.55); text-transform:uppercase; margin-top:6px;
+  }
+  .deadline-banner {
+    background:linear-gradient(90deg,#7A4700,#EF9F27,#7A4700);
+    color:#fff; font-size:12px; font-weight:700;
+    padding:7px 16px; text-align:center; letter-spacing:0.5px;
+  }
+
+  /* ── CONTAINER ── */
+  .container { max-width:520px; margin:0 auto; padding:18px 14px 60px; }
+
+  /* ── SECTION CARD ── */
+  .section-card {
+    background:var(--white); border-radius:var(--radius-lg);
+    padding:18px 16px; margin-bottom:14px;
+    box-shadow:0 4px 20px rgba(0,0,0,0.22);
+  }
+  .section-title {
+    font-size:11px; font-weight:800; text-transform:uppercase;
+    letter-spacing:1.8px; color:var(--red-dark);
+    margin-bottom:15px; display:flex; align-items:center; gap:8px;
+  }
+  .section-title::after { content:''; flex:1; height:1.5px; background:linear-gradient(90deg,#E24B4A44,transparent); }
+
+  /* ── FIELDS ── */
+  .field-group { margin-bottom:13px; }
+  label { display:block; font-size:12px; font-weight:700; color:#444; margin-bottom:5px; }
+  label .req { color:var(--red); margin-left:2px; }
+  label .opt { font-size:10px; font-weight:400; color:var(--gray); margin-left:4px; }
+
+  input[type="text"], input[type="tel"], input[type="number"] {
+    width:100%; padding:10px 13px; border:1.5px solid #ddd;
+    border-radius:var(--radius-sm); font-size:14px; font-family:inherit;
+    background:#fafafa; color:#222; outline:none;
+    transition:border-color .15s,background .15s;
+    text-transform:uppercase;
+  }
+  input[type="tel"] { text-transform:none; }
+  input[type="number"] { text-transform:none; }
+  input:focus { border-color:var(--red); background:#fff; box-shadow:0 0 0 3px rgba(226,75,74,0.1); }
+  input.error { border-color:var(--red); background:var(--red-light); }
+  .error-msg { font-size:11px; color:var(--red); margin-top:4px; display:none; }
+
+  /* ── COUNTER ── */
+  .counter-row { display:flex; gap:8px; align-items:center; }
+  .counter-row input { flex:1; text-align:center; font-weight:800; font-size:18px; text-transform:none; }
+  .counter-btn {
+    width:42px; height:42px; border-radius:var(--radius-sm);
+    border:1.5px solid #ddd; background:#f5f5f5;
+    font-size:24px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    flex-shrink:0; transition:all .12s; color:#555; line-height:1; padding-bottom:2px;
+  }
+  .counter-btn:hover { background:var(--red-light); border-color:var(--red); color:var(--red); }
+  .counter-btn:disabled { opacity:.3; cursor:not-allowed; }
+  .counter-limit { font-size:11px; color:var(--gray); margin-top:5px; }
+  .limit-warn { background:#fff3cd; border:1px solid #ffc107; border-radius:var(--radius-sm); padding:8px 12px; font-size:12px; color:#856404; display:none; margin-top:6px; }
+
+  /* ── UPLOAD ── */
+  .upload-area {
+    border:2px dashed #ddd; border-radius:var(--radius-sm);
+    padding:22px 12px; text-align:center; cursor:pointer;
+    background:#fafafa; transition:all .15s; position:relative;
+  }
+  .upload-area:hover { border-color:var(--red); background:var(--red-light); }
+  .upload-area.has-file { border-color:var(--green); background:var(--green-light); border-style:solid; }
+  .upload-area.upload-err { border-color:var(--red); background:var(--red-light); border-style:solid; }
+  .upload-area input[type="file"] { position:absolute; inset:0; opacity:0; cursor:pointer; width:100%; height:100%; }
+  .upload-icon { font-size:28px; margin-bottom:8px; }
+  .upload-text { font-size:12px; color:var(--gray); line-height:1.6; }
+  .upload-text strong { color:#333; }
+
+  /* ── RADIO BUBBLE (Internal/External) ── */
+  .bubble-group { display:flex; gap:8px; margin-top:2px; }
+  .bubble-opt { flex:1; }
+  .bubble-opt input[type="radio"] { display:none; }
+  .bubble-opt label {
+    display:flex; align-items:center; justify-content:center; gap:5px;
+    padding:8px 6px; border:2px solid #ddd; border-radius:20px;
+    font-size:12px; font-weight:700; color:#888; cursor:pointer;
+    transition:all .15s; text-align:center; text-transform:uppercase;
+    letter-spacing:0.5px;
+  }
+  .bubble-opt input[type="radio"]:checked + label {
+    border-color:var(--red); background:var(--red-light); color:var(--red-dark);
+  }
+  .bubble-opt.ext input[type="radio"]:checked + label {
+    border-color:var(--blue); background:var(--blue-light); color:var(--blue);
+  }
+  .ext-dept-field { display:none; margin-top:8px; }
+
+  /* ── PLAYER CARDS ── */
+  .players-list { display:flex; flex-direction:column; gap:12px; }
+  .player-card {
+    background:var(--gray-light); border-radius:var(--radius-sm);
+    padding:13px 13px 10px; border:1px solid #e5e5e5;
+    transition:opacity .2s,transform .2s;
+  }
+  .player-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:11px; }
+  .player-num {
+    font-size:12px; font-weight:800; color:var(--red-dark);
+    background:var(--red-light); padding:3px 11px; border-radius:12px; letter-spacing:.5px;
+  }
+  .remove-btn {
+    width:28px; height:28px; border-radius:50%;
+    border:1px solid #ccc; background:#fff; cursor:pointer;
+    font-size:14px; display:flex; align-items:center; justify-content:center;
+    color:#999; transition:all .12s; flex-shrink:0;
+  }
+  .remove-btn:hover { background:var(--red-light); border-color:var(--red); color:var(--red); }
+  .player-fields { display:grid; gap:8px; }
+  .player-fields input { font-size:13px; padding:8px 10px; }
+  .player-fields input[type="number"] { text-transform:none; }
+
+  /* ── ADD PLAYER BTN ── */
+  .add-player-btn {
+    width:100%; padding:12px; border-radius:var(--radius-sm);
+    border:2px dashed var(--red); background:var(--red-light);
+    color:var(--red-dark); font-size:13px; font-weight:700;
+    cursor:pointer; display:flex; align-items:center; justify-content:center;
+    gap:6px; transition:all .15s; margin-top:8px; font-family:inherit;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+  .add-player-btn:hover { background:#fad7d7; }
+  .add-player-btn:disabled { opacity:.4; cursor:not-allowed; border-style:solid; }
+
+  /* ── PLAYER COUNT BADGE ── */
+  .player-count-badge { display:flex; align-items:center; justify-content:space-between; margin-bottom:12px; }
+  .badge-count { font-size:12px; color:var(--gray); font-weight:600; }
+  .badge-count span { font-weight:800; color:var(--red-dark); }
+
+  /* ── SUBMIT ── */
+  .submit-btn {
+    width:100%; padding:15px; border-radius:var(--radius-sm); border:none;
+    background:linear-gradient(135deg,#c0392b,#8B0000);
+    color:#fff; font-size:15px; font-weight:800; cursor:pointer;
+    letter-spacing:.8px; text-transform:uppercase;
+    box-shadow:0 4px 20px rgba(139,0,0,0.45); transition:all .15s;
+    font-family:inherit;
+  }
+  .submit-btn:hover { transform:translateY(-1px); box-shadow:0 6px 24px rgba(139,0,0,0.5); }
+  .submit-btn:active { transform:translateY(0); }
+  .submit-btn:disabled { opacity:.5; cursor:not-allowed; transform:none; }
+
+  /* ── TOAST ── */
+  .toast {
+    position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(80px);
+    background:#222; color:#fff; padding:11px 22px; border-radius:24px;
+    font-size:13px; font-weight:600; z-index:9999;
+    transition:transform .3s ease; white-space:nowrap;
+    box-shadow:0 4px 20px rgba(0,0,0,0.35); max-width:88vw; text-align:center;
+  }
+  .toast.show { transform:translateX(-50%) translateY(0); }
+  .toast.success { background:var(--green-dark); }
+  .toast.error { background:var(--red-dark); }
+  .toast.warn { background:var(--gold-dark); }
+
+  /* ── MODALS ── */
+  .modal-overlay {
+    position:fixed; inset:0; background:rgba(0,0,0,0.7);
+    z-index:500; display:flex; align-items:center; justify-content:center; padding:20px;
+  }
+  .modal-box {
+    background:#fff; border-radius:20px; padding:30px 22px;
+    max-width:340px; width:100%; text-align:center;
+    box-shadow:0 20px 60px rgba(0,0,0,0.4);
+  }
+  .modal-icon { font-size:54px; margin-bottom:12px; }
+  .modal-title { font-size:20px; font-weight:800; color:#111; margin-bottom:8px; }
+  .modal-msg { font-size:13px; color:#555; line-height:1.7; margin-bottom:22px; }
+  .modal-reg { font-size:11px; color:var(--gray); margin-top:-14px; margin-bottom:20px; }
+  .modal-reg strong { font-size:16px; color:var(--red-dark); display:block; margin-top:4px; }
+  .modal-btn {
+    display:inline-block; padding:11px 32px; border-radius:var(--radius-sm);
+    background:var(--red); color:#fff; font-weight:800; font-size:14px;
+    border:none; cursor:pointer; font-family:inherit; text-transform:uppercase; letter-spacing:.5px;
+  }
+  .hidden { display:none !important; }
+
+  /* ── SPINNER ── */
+  .spinner {
+    width:18px; height:18px; border:2.5px solid rgba(255,255,255,0.3);
+    border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite;
+    display:inline-block; vertical-align:middle; margin-right:8px;
+  }
+  @keyframes spin { to { transform:rotate(360deg); } }
+
+  .footnote { text-align:center; padding:14px 16px 20px; color:rgba(255,255,255,0.3); font-size:11px; letter-spacing:.5px; }
+</style>
+</head>
+<body>
+
+<!-- ═══ POPUP PENDAFTARAN DITUTUP ═══ -->
+<div class="modal-overlay hidden" id="modalTutup">
+  <div class="modal-box">
+    <div class="modal-icon">🔒</div>
+    <div class="modal-title">Pendaftaran Ditutup</div>
+    <div class="modal-msg">
+      Batas pendaftaran <strong>TBP Championship HUT RI 81</strong> telah berakhir pada <strong>30 Juni 2026</strong>.<br><br>
+      Untuk informasi lebih lanjut, silakan hubungi panitia.
+    </div>
+    <button class="modal-btn" style="background:#555;" onclick="this.closest('.modal-overlay').style.display='none'">Tutup</button>
+  </div>
+</div>
+
+<!-- ═══ HERO ═══ -->
+<div class="hero">
+  <div class="hero-logo">
+    <img src="https://i.ibb.co.com/4g8QC0JH/tbpchampionship26.png" alt="TBP Championship HUT RI 81" onerror="this.style.display='none';document.getElementById('heroFallback').style.display='block'">
+    <div id="heroFallback" style="display:none;color:#fff;font-size:22px;font-weight:800;letter-spacing:1px;padding:10px 0;">TBP CHAMPIONSHIP<br><span style="font-size:14px;font-weight:500;color:rgba(255,255,255,0.7);letter-spacing:3px;">HUT RI 81</span></div>
+  </div>
+  <div class="hero-sub">⚽ Futsal Tournament · Pendaftaran Resmi ⚽</div>
+</div>
+<div class="deadline-banner">📅 Batas Pendaftaran: 30 Juni 2026</div>
+
+<div class="container">
+
+  <!-- ═══ INFO TEAM ═══ -->
+  <div class="section-card">
+    <div class="section-title">Informasi Team</div>
+
+    <div class="field-group">
+      <label>Nama Team <span class="req">*</span></label>
+      <input type="text" id="namaTeam" placeholder="CONTOH: GARUDA FC" autocomplete="off" oninput="autoUpper(this)">
+      <div class="error-msg" id="errNamaTeam">Nama team wajib diisi.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Nama Departemen / BU-Kontraktor <span class="req">*</span></label>
+      <input type="text" id="namaDept" placeholder="CONTOH: DEPT. PRODUKSI / PT. ABC" oninput="autoUpper(this)">
+      <div class="error-msg" id="errDept">Departemen / BU-Kontraktor wajib diisi.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Jumlah Pemain <span class="req">*</span> <span class="opt">(maks. 14 orang)</span></label>
+      <div class="counter-row">
+        <button class="counter-btn" id="btnMin" type="button" onclick="changeCount(-1)" disabled>−</button>
+        <input type="number" id="jumlahPemain" value="5" min="5" max="14" readonly>
+        <button class="counter-btn" id="btnPlus" type="button" onclick="changeCount(1)">+</button>
+      </div>
+      <div class="counter-limit">Minimal 5 pemain, maksimal 14 pemain</div>
+      <div class="limit-warn" id="limitWarn">⚠️ Batas maksimal 14 pemain telah tercapai!</div>
+    </div>
+  </div>
+
+  <!-- ═══ OFISIAL ═══ -->
+  <div class="section-card">
+    <div class="section-title">Ofisial Team</div>
+
+    <div class="field-group">
+      <label>Nama Manager <span class="req">*</span></label>
+      <input type="text" id="namaManager" placeholder="NAMA LENGKAP MANAGER" oninput="autoUpper(this)">
+      <div class="error-msg" id="errManager">Nama manager wajib diisi.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Nama Coach / Official <span class="req">*</span></label>
+      <input type="text" id="namaCoach" placeholder="NAMA LENGKAP COACH / OFFICIAL" oninput="autoUpper(this)">
+      <div class="error-msg" id="errCoach">Nama coach wajib diisi.</div>
+    </div>
+
+    <div class="field-group">
+      <label>No. WhatsApp Manager <span class="req">*</span></label>
+      <input type="tel" id="waManager" placeholder="08123456789" inputmode="numeric">
+      <div class="error-msg" id="errWA">Nomor WhatsApp wajib diisi.</div>
+    </div>
+  </div>
+
+  <!-- ═══ JERSEY & LOGO ═══ -->
+  <div class="section-card">
+    <div class="section-title">Jersey &amp; Logo Team</div>
+
+    <div class="field-group">
+      <label>Warna Jersey Utama <span class="req">*</span></label>
+      <input type="text" id="jerseyUtama" placeholder="CONTOH: MERAH-HITAM" oninput="autoUpper(this)">
+      <div class="error-msg" id="errJersey1">Warna jersey utama wajib diisi.</div>
+    </div>
+
+    <div class="field-group">
+      <label>Warna Jersey Ke-2 <span class="opt">(opsional)</span></label>
+      <input type="text" id="jerseyKedua" placeholder="CONTOH: PUTIH-BIRU" oninput="autoUpper(this)">
+    </div>
+
+    <div class="field-group">
+      <label>Upload Logo Team <span class="req">*</span></label>
+      <div class="upload-area" id="uploadArea">
+        <input type="file" id="logoFile" accept="image/*" onchange="handleUpload(this)">
+        <div class="upload-icon" id="uploadIcon">📁</div>
+        <div class="upload-text" id="uploadText"><strong>Pilih file logo team</strong><br>PNG, JPG — Maks. 2MB</div>
+      </div>
+      <div class="error-msg" id="errLogo">Logo team wajib di-upload.</div>
+    </div>
+  </div>
+
+  <!-- ═══ DATA PEMAIN ═══ -->
+  <div class="section-card">
+    <div class="section-title">Data Pemain</div>
+
+    <div class="player-count-badge">
+      <div class="badge-count">Pemain ditambahkan: <span id="playerCountLabel">0</span></div>
+      <div class="badge-count" id="minPlayerWarn" style="color:var(--red);display:none;">⚠ Min. 5 pemain</div>
+    </div>
+
+    <div class="players-list" id="playersList"></div>
+
+    <button class="add-player-btn" id="addPlayerBtn" type="button" onclick="addPlayer()">
+      + Tambah Pemain
+    </button>
+  </div>
+
+  <!-- ═══ SUBMIT ═══ -->
+  <button class="submit-btn" id="submitBtn" type="button" onclick="submitForm()">
+    🏆 Daftarkan Team Sekarang
+  </button>
+
+</div>
+
+<div class="footnote">TBP Championship HUT RI 81 · Futsal Tournament · Hubungi panitia untuk revisi data</div>
+
+<!-- ═══ MODAL DUPLIKAT ═══ -->
+<div class="modal-overlay hidden" id="modalDuplikat">
+  <div class="modal-box">
+    <div class="modal-icon">⚠️</div>
+    <div class="modal-title">Team Sudah Terdaftar</div>
+    <div class="modal-msg">Team "<strong id="dupTeamName"></strong>" sudah terdaftar sebelumnya.<br><br>Jika ingin melakukan <strong>revisi data</strong>, silakan hubungi panitia secara langsung.</div>
+    <button class="modal-btn" style="background:#E65100;" onclick="document.getElementById('modalDuplikat').classList.add('hidden')">Mengerti</button>
+  </div>
+</div>
+
+<!-- ═══ MODAL SUKSES ═══ -->
+<div class="modal-overlay hidden" id="modalSukses">
+  <div class="modal-box">
+    <div class="modal-icon">🎉</div>
+    <div class="modal-title">Pendaftaran Berhasil!</div>
+    <div class="modal-msg">Team <strong id="suksesTN"></strong> berhasil terdaftar dalam <strong>TBP Championship HUT RI 81</strong>!<br><br>Panitia akan menghubungi manager via WhatsApp untuk konfirmasi.</div>
+    <div class="modal-reg">Nomor Registrasi Anda:<br><strong id="noReg">—</strong></div>
+    <button class="modal-btn" onclick="location.reload()">Daftar Team Lain</button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ================================================================
+// GANTI URL INI DENGAN GOOGLE APPS SCRIPT WEB APP URL ANDA
+// ================================================================
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwJBrCdIuohtUhRa6knhPOCkOXz6E-A_wyN0P-7xysI2tXO9XeaOKJIPSLw7ESpvqBC/exec';
+// ================================================================
+
+const BATAS_DAFTAR = new Date('2026-06-30T23:59:59');
+
+let playerCount = 0;
+
+// Cek deadline saat halaman dibuka
+window.addEventListener('DOMContentLoaded', () => {
+  if (new Date() > BATAS_DAFTAR) {
+    document.getElementById('modalTutup').classList.remove('hidden');
+    document.getElementById('submitBtn').disabled = true;
+    document.getElementById('submitBtn').textContent = '🔒 Pendaftaran Ditutup';
+  }
+  updatePlayerCount();
+});
+
+function autoUpper(el) {
+  const pos = el.selectionStart;
+  el.value = el.value.toUpperCase();
+  try { el.setSelectionRange(pos, pos); } catch(e) {}
+}
+
+function showToast(msg, type = '', dur = 3500) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show ' + type;
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.className = 'toast'; }, dur);
+}
+
+function changeCount(delta) {
+  const el = document.getElementById('jumlahPemain');
+  let val = parseInt(el.value) + delta;
+  if (val < 5) val = 5;
+  if (val > 14) { val = 14; document.getElementById('limitWarn').style.display = 'block'; }
+  else { document.getElementById('limitWarn').style.display = 'none'; }
+  el.value = val;
+  document.getElementById('btnMin').disabled = val <= 5;
+  document.getElementById('btnPlus').disabled = val >= 14;
+  updatePlayerCount();
+}
+
+function handleUpload(input) {
+  const area = document.getElementById('uploadArea');
+  const errEl = document.getElementById('errLogo');
+  if (input.files && input.files[0]) {
+    const f = input.files[0];
+    if (f.size > 2 * 1024 * 1024) {
+      showToast('File terlalu besar. Maks. 2MB.', 'error');
+      input.value = ''; return;
+    }
+    area.classList.remove('upload-err');
+    area.classList.add('has-file');
+    errEl.style.display = 'none';
+    document.getElementById('uploadIcon').textContent = '🖼️';
+    document.getElementById('uploadText').innerHTML =
+      '<strong>' + f.name + '</strong><br><span style="color:var(--green-dark)">✓ Logo berhasil dipilih</span>';
+  }
+}
+
+function addPlayer() {
+  const currentCards = document.querySelectorAll('.player-card').length;
+  const max = parseInt(document.getElementById('jumlahPemain').value);
+  if (currentCards >= max) { showToast('Jumlah pemain sudah penuh.', 'warn'); return; }
+
+  playerCount++;
+  const pid = playerCount;
+  const list = document.getElementById('playersList');
+  const div = document.createElement('div');
+  div.className = 'player-card';
+  div.id = 'player_' + pid;
+  div.innerHTML = `
+    <div class="player-header">
+      <div class="player-num" id="pLabel_${pid}">PEMAIN ${currentCards + 1}</div>
+      <button class="remove-btn" type="button" onclick="removePlayer(${pid})" title="Hapus">✕</button>
+    </div>
+    <div class="player-fields">
+      <input type="text" id="pNama_${pid}" placeholder="NAMA LENGKAP PEMAIN" oninput="autoUpper(this)">
+      <input type="number" id="pJersey_${pid}" placeholder="Nomor Jersey (1–99)" min="1" max="99">
+      <input type="text" id="pEmpId_${pid}" placeholder="EMPLOYEE ID" oninput="autoUpper(this)">
+      <div style="margin-top:4px;">
+        <label style="font-size:11px;color:#666;margin-bottom:5px;">Status Pemain <span style="color:var(--red)">*</span></label>
+        <div class="bubble-group">
+          <div class="bubble-opt">
+            <input type="radio" name="status_${pid}" id="int_${pid}" value="internal" onchange="toggleStatus(${pid},'internal')" checked>
+            <label for="int_${pid}">🏢 Internal Dept.</label>
+          </div>
+          <div class="bubble-opt ext">
+            <input type="radio" name="status_${pid}" id="ext_${pid}" value="external" onchange="toggleStatus(${pid},'external')">
+            <label for="ext_${pid}">🌐 External Dept.</label>
+          </div>
+        </div>
+        <div class="ext-dept-field" id="extDeptWrap_${pid}">
+          <input type="text" id="pDept_${pid}" placeholder="NAMA DEPT. / BU / KONTRAKTOR PEMAIN" oninput="autoUpper(this)">
+        </div>
+      </div>
+    </div>`;
+  list.appendChild(div);
+  updatePlayerCount();
+  setTimeout(() => div.scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+}
+
+function removePlayer(id) {
+  const el = document.getElementById('player_' + id);
+  if (!el) return;
+  el.style.opacity = '0'; el.style.transform = 'scale(0.96)';
+  setTimeout(() => { el.remove(); updatePlayerCount(); renumberPlayers(); }, 200);
+}
+
+function renumberPlayers() {
+  document.querySelectorAll('.player-card').forEach((card, i) => {
+    const id = card.id.split('_')[1];
+    const lbl = document.getElementById('pLabel_' + id);
+    if (lbl) lbl.textContent = 'PEMAIN ' + (i + 1);
+  });
+}
+
+function toggleStatus(pid, val) {
+  const wrap = document.getElementById('extDeptWrap_' + pid);
+  if (wrap) wrap.style.display = val === 'external' ? 'block' : 'none';
+}
+
+function updatePlayerCount() {
+  const cnt = document.querySelectorAll('.player-card').length;
+  document.getElementById('playerCountLabel').textContent = cnt;
+  const max = parseInt(document.getElementById('jumlahPemain').value);
+  document.getElementById('minPlayerWarn').style.display = (cnt > 0 && cnt < 5) ? 'block' : 'none';
+  const addBtn = document.getElementById('addPlayerBtn');
+  addBtn.disabled = cnt >= max;
+  addBtn.textContent = cnt >= max
+    ? '✓ Slot Pemain Penuh (' + cnt + '/' + max + ')'
+    : '+ Tambah Pemain (' + cnt + '/' + max + ')';
+}
+
+function validate() {
+  if (new Date() > BATAS_DAFTAR) {
+    document.getElementById('modalTutup').classList.remove('hidden'); return false;
+  }
+  let ok = true;
+  const simpleFields = [
+    { id: 'namaTeam',    err: 'errNamaTeam' },
+    { id: 'namaDept',    err: 'errDept' },
+    { id: 'namaManager', err: 'errManager' },
+    { id: 'namaCoach',   err: 'errCoach' },
+    { id: 'waManager',   err: 'errWA' },
+    { id: 'jerseyUtama', err: 'errJersey1' },
+  ];
+  simpleFields.forEach(f => {
+    const el = document.getElementById(f.id);
+    const err = document.getElementById(f.err);
+    if (!el.value.trim()) {
+      el.classList.add('error'); err.style.display = 'block'; ok = false;
+    } else {
+      el.classList.remove('error'); err.style.display = 'none';
+    }
+  });
+  // Logo validasi
+  const logoFile = document.getElementById('logoFile').files[0];
+  const uploadArea = document.getElementById('uploadArea');
+  const errLogo = document.getElementById('errLogo');
+  if (!logoFile) {
+    uploadArea.classList.add('upload-err'); errLogo.style.display = 'block'; ok = false;
+  } else {
+    uploadArea.classList.remove('upload-err'); errLogo.style.display = 'none';
+  }
+  // Pemain
+  const players = document.querySelectorAll('.player-card');
+  if (players.length < 5) { showToast('Minimal 5 pemain harus ditambahkan.', 'error'); ok = false; }
+  let pErr = false;
+  players.forEach(card => {
+    const id = card.id.split('_')[1];
+    const nama = document.getElementById('pNama_' + id);
+    if (nama && !nama.value.trim()) {
+      nama.classList.add('error'); pErr = true;
+    } else if (nama) nama.classList.remove('error');
+    const isExt = document.getElementById('ext_' + id)?.checked;
+    if (isExt) {
+      const dept = document.getElementById('pDept_' + id);
+      if (dept && !dept.value.trim()) { dept.classList.add('error'); pErr = true; }
+      else if (dept) dept.classList.remove('error');
+    }
+  });
+  if (pErr) { showToast('Lengkapi data semua pemain.', 'error'); ok = false; }
+  return ok;
+}
+
+function getLogoBase64() {
+  return new Promise(resolve => {
+    const file = document.getElementById('logoFile').files[0];
+    if (!file) { resolve(''); return; }
+    const r = new FileReader();
+    r.onload = e => resolve(e.target.result);
+    r.readAsDataURL(file);
+  });
+}
+
+async function submitForm() {
+  if (!validate()) return;
+  if (SCRIPT_URL === 'PASTE_GOOGLE_APPS_SCRIPT_URL_DISINI') {
+    showToast('⚠ Pasang Google Apps Script URL terlebih dahulu!', 'warn', 5000); return;
+  }
+  const btn = document.getElementById('submitBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Mengirim Data...';
+
+  const players = [];
+  document.querySelectorAll('.player-card').forEach((card, i) => {
+    const id = card.id.split('_')[1];
+    const isExt = document.getElementById('ext_' + id)?.checked;
+    players.push({
+      nomor: i + 1,
+      nama:   document.getElementById('pNama_' + id)?.value.trim() || '',
+      jersey: document.getElementById('pJersey_' + id)?.value || '',
+      empId:  document.getElementById('pEmpId_' + id)?.value.trim() || '',
+      status: isExt ? 'EXTERNAL' : 'INTERNAL',
+      dept:   isExt
+        ? (document.getElementById('pDept_' + id)?.value.trim() || '')
+        : document.getElementById('namaDept').value.trim()
+    });
+  });
+
+  const logoBase64 = await getLogoBase64();
+  const now = new Date();
+  const waktu = now.toLocaleString('id-ID', { dateStyle:'full', timeStyle:'short' });
+
+  const payload = {
+    namaTeam:    document.getElementById('namaTeam').value.trim(),
+    namaDept:    document.getElementById('namaDept').value.trim(),
+    jumlahPemain: document.getElementById('jumlahPemain').value,
+    namaManager: document.getElementById('namaManager').value.trim(),
+    namaCoach:   document.getElementById('namaCoach').value.trim(),
+    waManager:   document.getElementById('waManager').value.trim(),
+    jerseyUtama: document.getElementById('jerseyUtama').value.trim(),
+    jerseyKedua: document.getElementById('jerseyKedua').value.trim(),
+    logo:        logoBase64,
+    players:     players,
+    waktuDaftar: waktu
+  };
+
+  try {
+    const res = await fetch(SCRIPT_URL, { method: 'POST', body: JSON.stringify(payload) });
+    const data = await res.json();
+    if (data.status === 'duplicate') {
+      document.getElementById('dupTeamName').textContent = payload.namaTeam;
+      document.getElementById('modalDuplikat').classList.remove('hidden');
+    } else if (data.status === 'success') {
+      document.getElementById('suksesTN').textContent = payload.namaTeam;
+      document.getElementById('noReg').textContent = data.noReg || '—';
+      document.getElementById('modalSukses').classList.remove('hidden');
+    } else {
+      showToast('Gagal mengirim. Coba lagi.', 'error');
+    }
+  } catch (e) {
+    showToast('Koneksi gagal. Periksa internet Anda.', 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = '🏆 Daftarkan Team Sekarang';
+  }
+}
+</script>
+</body>
+</html>
